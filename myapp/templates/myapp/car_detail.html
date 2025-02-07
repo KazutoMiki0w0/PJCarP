@@ -1,0 +1,18 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ car.name }}</h2>
+    <img src="{{ car.image.url }}" class="img-fluid" alt="{{ car.name }}">
+
+    <p>วันที่รับรถ: {{ pickup_date }}</p>
+    <p>วันที่คืนรถ: {{ return_date }}</p>
+    <p>จุดรับรถ: {{ pickup_location }}</p>
+    <p>💰 ราคาเช่า: ฿{{ car.price_per_day }}/วัน</p>
+    {% if total_price %}
+        <p class="text-danger">🔥 ราคารวม: ฿{{ total_price }} บาท</p>
+    {% endif %}
+
+
+    <a href="{% url 'rental_form' car.id %}" class="btn btn-primary">เช่ารถ</a>
+</div>
+{% endblock %}

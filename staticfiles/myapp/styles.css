@@ -1,0 +1,102 @@
+/* 🎨 Login Background */
+.login-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("{% static 'images/myapp/bg.jpg' %}") no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* 🌀 Glassmorphism Card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    padding: 35px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    color: white;
+    transition: transform 0.3s ease-in-out;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 📝 Input Fields */
+.glass-card input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    outline: none;
+}
+
+.glass-card input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ✅ Login Button */
+.glass-card .btn-success {
+    background: linear-gradient(45deg, #32CD32, #228B22);
+    border: none;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(50, 205, 50, 0.5);
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+}
+
+.glass-card .btn-success:hover {
+    background: linear-gradient(45deg, #3CE63C, #29A329);
+    box-shadow: 0 5px 25px rgba(50, 255, 50, 0.7);
+}
+
+/* 🔘 Register Button */
+.glass-card .btn-outline-light {
+    border-color: white;
+    color: white;
+    padding: 12px;
+    border-radius: 50px;
+    width: 100%;
+}
+
+.glass-card .btn-outline-light:hover {
+    background: white;
+    color: black;
+}
+
+/* 🔲 Checkbox */
+.form-check {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 🌀 Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

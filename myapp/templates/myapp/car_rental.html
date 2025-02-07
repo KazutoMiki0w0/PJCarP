@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จุดรับ-คืนรถในภูเก็ต</title>
+</head>
+<body>
+    <h1>🚗 จุดรับ-คืนรถในภูเก็ต</h1>
+    <pre>{{ locations }}</pre>
+
+    <!-- 🔍 Debug -->
+    <h3>🔍 Debug locations:</h3>
+    <pre>{{ locations }}</pre>  
+    {% debug %} <!-- ✅ ใช้ debug เพื่อตรวจสอบค่า context -->
+
+    {% for location in locations %}
+        <h3>{{ location.name }}</h3>
+        <iframe
+            width="600"
+            height="450"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_api_key }}&q={{ location.latitude }},{{ location.longitude }}">
+        </iframe>
+    {% empty %}
+        <p>❌ ไม่มีข้อมูลจุดรับ-คืนรถ</p>
+    {% endfor %}
+
+    <select id="locationSelect" class="form-select">
+        <option value="" selected>โปรดเลือกจุดรับ-คืนรถ</option>
+        {% for location in locations %}
+            <option value="{{ location.latitude }},{{ location.longitude }}" 
+                    data-lat="{{ location.latitude }}" 
+                    data-lng="{{ location.longitude }}">
+                {{ location.name }}
+            </option>
+        {% empty %}
+            <option disabled>⚠️ ไม่มีข้อมูลพิกัด</option>
+        {% endfor %}
+    </select>
+    
+    
+    <iframe
+        id="mapFrame"
+        width="600"
+        height="450"
+        style="border:0"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_api_key }}&q=7.8804,98.3923">
+    </iframe>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var locationSelect = document.getElementById("locationSelect");
+            var mapFrame = document.getElementById("mapFrame");
+            var apiKey = document.getElementById("mapContainer").getAttribute("data-api-key"); // ดึง API Key
+            
+            locationSelect.addEventListener("change", function () {
+                var selectedValue = this.value;
+                console.log("🔍 ค่าที่เลือก:", selectedValue); // ดูค่าที่ถูกเลือกใน Console
+                if (selectedValue) {
+                    mapFrame.src = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${selectedValue}`;
+                }
+            });
+        });
+    </script>
+    
+</body>
+</html>

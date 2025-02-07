@@ -1,0 +1,122 @@
+{% extends "myapp/base.html" %}
+
+{% load static %}
+
+{% block title %}เข้าสู่ระบบ | Car Rental{% endblock %}
+
+{% block content %}
+<style>
+    .login-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: url("{% static 'images/myapp/bg.jpg' %}") no-repeat center center/cover;
+        background-size: cover;
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 20px;
+        padding: 35px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        color: white;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .glass-card input {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        margin: 10px 0;
+        padding: 12px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .glass-card input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .glass-card .btn-success {
+        background: linear-gradient(45deg, #32CD32, #228B22);
+        border: none;
+        padding: 12px;
+        font-weight: bold;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(50, 205, 50, 0.5);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .glass-card .btn-success:hover {
+        background: linear-gradient(45deg, #3CE63C, #29A329);
+        box-shadow: 0 5px 25px rgba(50, 255, 50, 0.7);
+    }
+
+    .glass-card .btn-outline-light {
+        border-color: white;
+        color: white;
+        padding: 12px;
+        border-radius: 50px;
+    }
+
+    .glass-card .btn-outline-light:hover {
+        background: white;
+        color: black;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .glass-card {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+</style>
+
+<div class="login-container">
+    <div class="glass-card">
+        <h2 class="mb-4">🚗 ภูเก็ตเช่ารถ</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" class="form-control" placeholder="Username" name="username" required>
+            <input type="password" class="form-control" placeholder="Password" name="password" required>
+    
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input me-2" type="checkbox" id="rememberMe">
+                <label class="form-check-label" for="rememberMe">จดจำรหัสผ่าน</label>
+                <a href="#" class="ms-auto text-white-50">ลืมรหัสผ่าน?</a>
+            </div>
+    
+            <button type="submit" class="btn btn-success w-100">เข้าสู่ระบบ</button>
+            <a href="{% url 'register' %}" class="btn btn-outline-light w-100 mt-2">ลงทะเบียน</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

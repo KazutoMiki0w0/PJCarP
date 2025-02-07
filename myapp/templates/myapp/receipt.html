@@ -1,0 +1,39 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>📜 ใบเสร็จการเช่ารถ</h2>
+
+    <div class="row">
+        <!-- ✅ แสดงภาพรถ -->
+        <div class="col-md-4">
+            <div class="card">
+                {% if car_image %}
+                    <img src="{{ car_image }}" class="card-img-top" alt="Car Image">
+                {% else %}
+                    <p class="text-muted text-center">ไม่มีภาพรถ</p>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ car_name|default:"ไม่ทราบชื่อรถ" }}</h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ แสดงข้อมูลใบเสร็จ -->
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h4>📜 รายละเอียดการจอง</h4>
+                <p><strong>รหัสการจอง:</strong> {{ booking_id }}</p>
+                <p><strong>ชื่อรถ:</strong> {{ car_name }}</p>
+                <p><strong>ชื่อผู้เช่า:</strong> {{ first_name }} {{ last_name }}</p>
+                <p><strong>อีเมล:</strong> {{ email }}</p>
+                <p><strong>เบอร์โทร:</strong> {{ phone }}</p>
+                <p><strong>📍 จุดรับรถ:</strong> {{ pickup_location }}</p>
+                <p><strong>📍 จุดคืนรถ:</strong> {{ return_location }}</p>
+                <p><strong>📅 วันที่รับรถ:</strong> {{ pickup_date }}</p>
+                <p><strong>📅 วันที่คืนรถ:</strong> {{ return_date }}</p>
+                <p><strong>💰 ราคารวม:</strong> ฿{{ total_price }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

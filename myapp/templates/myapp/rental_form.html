@@ -1,0 +1,86 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                {% if car and car.image and car.image.url %}
+                    <img src="{{ car.image.url }}" class="card-img-top" alt="Car Image">
+                {% else %}
+                    <p class="text-muted text-center">ไม่มีภาพรถ</p>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.name|default:"ไม่ทราบชื่อรถ" }}</h5>
+                    <p class="card-text">{{ car.transmission|default:"ไม่ระบุประเภทเกียร์" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card p-4 shadow-sm">
+                <h4 class="mb-3">📝 กรอกข้อมูลการเช่า</h4>
+                <form method="post" action="{% url 'receipt' %}">
+                    {% csrf_token %}
+
+                    <!-- ✅ เลือกจุดรับรถ -->
+                    <div class="mb-3">
+                        <label class="form-label">📍 จุดรับรถ *</label>
+                        <select name="pickup_location" class="form-select" required>
+                            <option value="สนามบินภูเก็ต">สนามบินภูเก็ต</option>
+                            <option value="ตัวเมืองภูเก็ต">ตัวเมืองภูเก็ต</option>
+                            <option value="หาดกะตะ">หาดกะตะ</option>
+                            <option value="หาดกมลา">หาดกมลา</option>
+                        </select>
+                    </div>
+
+                    <!-- ✅ เลือกจุดคืนรถ -->
+                    <div class="mb-3">
+                        <label class="form-label">📍 จุดคืนรถ *</label>
+                        <select name="return_location" class="form-select" required>
+                            <option value="สนามบินภูเก็ต">สนามบินภูเก็ต</option>
+                            <option value="ตัวเมืองภูเก็ต">ตัวเมืองภูเก็ต</option>
+                            <option value="หาดกะตะ">หาดกะตะ</option>
+                            <option value="หาดกมลา">หาดกมลา</option>
+                        </select>
+                    </div>
+
+                    <!-- ✅ วันที่รับและคืนรถ -->
+                    <div class="mb-3 p-3 bg-light rounded">
+                        <h6>📅 วันที่รับรถ</h6>
+                        <p class="mb-2">{{ pickup_date }}</p>
+                        <h6>📅 วันที่คืนรถ</h6>
+                        <p>{{ return_date }}</p>
+                    </div>
+
+                    <!-- ✅ กรอกข้อมูลผู้เช่า -->
+                    <div class="mb-3">
+                        <label class="form-label">👤 ชื่อจริง *</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="กรอกชื่อจริง" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">👤 นามสกุล *</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="กรอกนามสกุล" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">📧 อีเมล *</label>
+                        <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">📞 เบอร์โทรศัพท์ *</label>
+                        <div class="input-group">
+                            <span class="input-group-text">+66</span>
+                            <input type="text" name="phone" class="form-control" placeholder="กรอกเบอร์โทร" required>
+                        </div>
+                    </div>
+
+                    <!-- ✅ ปุ่มกดส่งข้อมูล -->
+                    <button type="submit" class="btn btn-success w-100 shadow">
+                        ✅ ยืนยันการเช่า
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

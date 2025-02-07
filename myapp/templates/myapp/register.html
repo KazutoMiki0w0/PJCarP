@@ -1,0 +1,120 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+{% block title %}สมัครสมาชิก | Car Rental{% endblock %}
+
+{% block content %}
+<style>
+    .register-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: url("{% static 'images/myapp/bg.jpg' %}") no-repeat center center/cover;
+        background-size: cover;
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .glass-container {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(12px);
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        color: white;
+        width: 100%;
+        max-width: 400px;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .glass-container input {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        padding: 12px;
+        border-radius: 10px;
+        text-align: center;
+    }
+    .glass-container input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .btn-success {
+        background: linear-gradient(45deg, #32CD32, #228B22);
+        border: none;
+        padding: 12px;
+        font-weight: bold;
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(50, 205, 50, 0.5);
+        transition: all 0.3s ease-in-out;
+    }
+    .btn-success:hover {
+        background: linear-gradient(45deg, #3CE63C, #29A329);
+        box-shadow: 0 5px 25px rgba(50, 255, 50, 0.7);
+    }
+    .btn-danger {
+        border-radius: 50px;
+        padding: 12px;
+    }
+</style>
+
+<div class="register-container">
+    <div class="glass-container text-center">
+        <h2 class="mb-4">🚗 สมัครสมาชิก</h2>
+
+        <!-- ✅ แสดงข้อความแจ้งเตือน -->
+        {% if messages %}
+            <div class="alert alert-warning">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="ชื่อบัญชี" name="username" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" placeholder="รหัสผ่าน" name="password1" id="password1" required>
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" placeholder="ยืนยันรหัสผ่าน" name="password2" id="password2" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="ชื่อแสดงบนเว็บ" name="display_name" required>
+            </div>
+            <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Email" name="email" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">สมัครสมาชิก</button>
+            <a href="{% url 'login' %}" class="btn btn-danger w-100 mt-2">ยกเลิก</a>
+        </form>
+    </div>
+</div>
+
+<!-- ✅ ตรวจสอบรหัสผ่านก่อนส่งฟอร์ม -->
+<script>
+function validateForm() {
+    let pass1 = document.getElementById("password1").value;
+    let pass2 = document.getElementById("password2").value;
+
+    if (pass1 !== pass2) {
+        alert("❌ รหัสผ่านไม่ตรงกัน!");
+        return false;
+    }
+
+    if (pass1.length < 6) {
+        alert("🔑 รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร!");
+        return false;
+    }
+
+    return true;
+}
+</script>
+{% endblock %}

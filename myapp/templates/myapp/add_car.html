@@ -1,0 +1,14 @@
+{% extends 'myapp/base.html' %}
+{% load bootstrap5 %}  <!-- ✅ โหลด Bootstrap 5 -->
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">เพิ่มรถใหม่ 🚗</h2>
+
+    <form method="post" enctype="multipart/form-data" class="mt-3">
+        {% csrf_token %}
+        {% bootstrap_form form %}  <!-- ✅ ใช้ Bootstrap 5 แสดงฟอร์ม -->
+        <button type="submit" class="btn btn-primary">บันทึก</button>
+    </form>
+
+</div>
+{% endblock %}

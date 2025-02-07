@@ -1,0 +1,56 @@
+{% extends "myapp/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>🚗 รายละเอียดการจอง</h2>
+
+    <!-- 🔹 สรุปการจอง -->
+    <div class="card shadow-sm p-4">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{% if car.image %}{{ car.image.url }}{% else %}{% static 'images/default-car.png' %}{% endif %}" class="img-fluid rounded" alt="{{ car.name }}">
+            </div>
+            <div class="col-md-8">
+                <h4>{{ car.name }}</h4>
+                <p>🚗 รุ่น: {{ car.brand }} {{ car.model }} ({{ car.year }})</p>
+                <p>💰 ราคา: ฿{{ car.price_per_day }}/วัน</p>
+                <p>📅 วันรับรถ: {{ pickup_date }}</p>
+                <p>📅 วันคืนรถ: {{ return_date }}</p>
+                <p>🔥 ราคารวม: ฿{{ total_price }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 ฟอร์มกรอกข้อมูล -->
+    <form method="POST" action="{% url 'confirm_booking' %}" class="mt-4">
+        {% csrf_token %}
+        <input type="hidden" name="car_id" value="{{ car.id }}">
+        <input type="hidden" name="pickup_date" value="{{ pickup_date }}">
+        <input type="hidden" name="return_date" value="{{ return_date }}">
+        <input type="hidden" name="total_price" value="{{ total_price }}">
+
+        <div class="mb-3">
+            <label class="form-label">ชื่อจริง *</label>
+            <input type="text" name="first_name" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">นามสกุล *</label>
+            <input type="text" name="last_name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">อีเมล *</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">เบอร์โทร *</label>
+            <input type="text" name="phone" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100">ยืนยันการจอง ✅</button>
+    </form>
+</div>
+{% endblock %}

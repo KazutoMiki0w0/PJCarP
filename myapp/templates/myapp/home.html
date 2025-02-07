@@ -1,0 +1,195 @@
+{% extends "myapp/base.html" %}
+{% load django_bootstrap5 %}
+{% load static %} 
+
+{% block content %}
+<div class="container mt-4">
+
+    <!-- 🔹 แสดงแผนที่จุดรับ-คืนรถ -->
+    {% if google_maps_api_key %}
+    <div class="mb-4">
+        <h4>📍 จุดรับ-คืนรถในภูเก็ต</h4>
+        <div class="map-container">
+            <iframe
+                id="mapFrame"
+                width="100%"
+                height="450"
+                style="border:0"
+                loading="lazy"
+                allowfullscreen
+                referrerpolicy="no-referrer-when-downgrade"
+                data-api-key="{{ google_maps_api_key }}"
+                src="https://www.google.com/maps/embed/v1/place?key={{ google_maps_api_key }}&q=Phuket,Thailand">
+            </iframe>
+        </div>
+    </div>
+    {% else %}
+    <p class="text-danger">⚠️ Google Maps API Key ไม่ถูกต้อง</p>
+    {% endif %}
+    
+    <!-- 🔹 Dropdown เลือกตำแหน่ง -->
+    <div class="mb-3">
+        <label for="locationSelect" class="form-label">🔽 เลือกจุดรับ-คืนรถ</label>
+        <select id="locationSelect" class="form-select">
+            <option value="" selected disabled>โปรดเลือกจุดรับ-คืนรถ</option>
+            {% for location in locations %}
+                <option value="{{ location.latitude }},{{ location.longitude }}">
+                    {{ location.name }}
+                </option>
+            {% empty %}
+                <option disabled>⚠️ ไม่มีข้อมูลพิกัด</option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <!-- 🔹 ปุ่มเลือกตำแหน่ง -->
+    <div class="row">
+        {% for location in locations %}
+        <div class="col-md-3 mb-2">
+            <button class="btn btn-light w-100 map-button" data-location="{{ location.latitude }},{{ location.longitude }}">
+                {{ location.name }}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+      
+    <!-- 🔹 JavaScript อัปเดตแผนที่ -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let mapFrame = document.getElementById("mapFrame");
+            let apiKey = mapFrame ? mapFrame.getAttribute("data-api-key") : null;
+
+            if (!apiKey) {
+                console.error("❌ API Key ไม่ถูกต้อง! ตรวจสอบ settings.GOOGLE_MAPS_API_KEY");
+                return;
+            }
+
+            function updateMap(lat, lng) {
+                if (lat && lng) {
+                    mapFrame.src = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${lat},${lng}`;
+                } else {
+                    console.warn("⚠️ พิกัดไม่ถูกต้อง:", lat, lng);
+                }
+            }
+
+            // 🎯 เมื่อเลือกจาก Dropdown
+            let selectBox = document.getElementById("locationSelect");
+            if (selectBox) {
+                selectBox.addEventListener("change", function () {
+                    if (this.value) {
+                        let [lat, lng] = this.value.split(",");
+                        updateMap(lat, lng);
+                    }
+                });
+            }
+
+            // 🎯 เมื่อกดปุ่มเลือกจุดรับ-คืนรถ
+            document.querySelectorAll(".map-button").forEach(button => {
+                button.addEventListener("click", function () {
+                    let [lat, lng] = this.dataset.location.split(",");
+                    updateMap(lat, lng);
+                });
+            });
+        });
+    </script>
+    
+
+</div>
+    <!-- 🔹 ฟอร์มค้นหารถเช่า -->
+    <form method="GET" action="{% url 'home' %}" class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label">📅 วัน-เวลารับรถ</label>
+            <input type="datetime-local" class="form-control" name="pickup_date" value="{{ request.GET.pickup_date }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">📅 วัน-เวลาคืนรถ</label>
+            <input type="datetime-local" class="form-control" name="return_date" value="{{ request.GET.return_date }}">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-warning w-100">ค้นหารถเช่า</button>
+        </div>
+    </form>
+
+    <!-- 🔹 โครงสร้างหลัก -->
+    <div class="row mt-4">
+        
+        <!-- 🔹 Sidebar ตัวกรอง -->
+        <div class="col-md-3">
+            <div class="filter-box p-3 bg-white shadow-sm rounded">
+                <h5>ตัวช่วยค้นหา</h5>
+                <hr>
+
+                <!-- 🔹 ฟิลเตอร์ยี่ห้อ -->
+                <form method="GET" action="{% url 'home' %}">
+                    <label class="form-label">🚗 ยี่ห้อรถ</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for brand in brands %}
+                        <button type="submit" name="brand" value="{{ brand }}" class="btn btn-light border w-100 p-2">
+                            <img src="{% static 'images/brands/'|add:brand|lower|add:'.png' %}" alt="{{ brand }}" class="img-fluid" style="max-height: 40px;">
+                            <p class="mt-1 small">{{ brand }}</p>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </form>
+                
+                <hr>
+                
+                <!-- 🔹 ฟิลเตอร์ช่วงราคา -->
+                <form method="GET" action="{% url 'home' %}">
+                    <label class="form-label">💰 ช่วงราคา (ต่อวัน)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="min_price" value="{{ request.GET.min_price|default:1 }}" min="1" placeholder="ต่ำสุด">
+                        <span class="input-group-text">ถึง</span>
+                        <input type="number" class="form-control" name="max_price" value="{{ request.GET.max_price|default:6000 }}" min="1" placeholder="สูงสุด">
+                    </div>
+                    <button type="submit" class="btn btn-secondary mt-2 w-100">กรองราคา</button>
+                </form>
+                
+                <hr>
+
+                <!-- 🔹 ฟิลเตอร์จำนวนที่นั่ง -->
+                <form method="GET" action="{% url 'home' %}">
+                    <label class="form-label">👥 จำนวนที่นั่ง</label>
+                    <select class="form-select" name="seats" onchange="this.form.submit()">
+                        <option value="">-- ทั้งหมด --</option>
+                        {% for seat in seat_options %}
+                            <option value="{{ seat }}" {% if request.GET.seats == seat|stringformat:"s" %}selected{% endif %}>{{ seat }} ที่นั่ง</option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <!-- 🔹 รายการรถ -->
+        <div class="col-md-9">
+            <h4>🚗 รถให้เช่าทั้งหมด</h4>
+            <div class="row">
+                {% for car in cars %}
+                <div class="col-md-6 mb-4">
+                    <div class="card car-card shadow-sm">
+                        <img src="{% if car.image %}{{ car.image.url }}{% else %}{% static 'images/default-car.png' %}{% endif %}" class="card-img-top" alt="{{ car.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ car.name }}</h5>
+                            <p class="card-text">{{ car.brand }} - {{ car.model }} ({{ car.year }})</p>
+                            <p class="text-muted">👥 {{ car.seats }} ที่นั่ง</p>
+                            <p class="text-success">💰 ฿{{ car.price_per_day }}/วัน</p>
+                            {% if request.GET.pickup_date and request.GET.return_date %}
+                                <p class="text-danger">🔥 ราคารวม: ฿{{ car.total_price }}</p>
+                            {% endif %}
+                            <a href="{% url 'car_detail' car.id %}?pickup_date={{ request.GET.pickup_date }}&return_date={{ request.GET.return_date }}"
+                            class="btn btn-primary">
+                                รายละเอียด
+                            </a>
+
+
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">❌ ไม่พบรถที่ตรงกับเงื่อนไข</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
