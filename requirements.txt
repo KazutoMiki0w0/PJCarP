@@ -1,0 +1,5 @@
+Django>=4.0
+gunicorn
+psycopg2-binary  # (ถ้าใช้ PostgreSQL)
+dj-database-url  # (ถ้าใช้ DATABASE_URL)
+whitenoise       # (สำหรับ static files)
